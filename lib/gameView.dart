@@ -1,189 +1,159 @@
-// ignore_for_file: camel_case_types, file_names, unnecessary_new
-
-import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
+import 'package:provider/provider.dart';
+import 'package:quiz_final/questions.dart';
 
-int index = 0;
-bool done = false;
-int answerindex = 0;
-int score = 0;
+class GameView extends StatefulWidget {
+  GameView({Key? key}) : super(key: key);
 
-class gameView extends StatefulWidget {
-  List qList;
-  gameView({Key? key, required this.qList}) : super(key: key);
   @override
-  State<gameView> createState() => gameViewState(questionList: qList);
+  _gameViewState createState() => _gameViewState();
 }
 
-String correctAnswer = '';
-
-class gameViewState extends State<gameView> {
+class _gameViewState extends State<GameView> {
+  // Set<Question> qList = {};
+  // void onGameCreated()  {
+  //   setState(() async {
+  //     for (int i = 0; i < 10; i++) {
+  //       qList.add(await MyState().getQuestions2(i));
+  //     }
+  //   });
+  // }
   ValueNotifier<bool> rightOrWrong = ValueNotifier(false);
-  List questionList;
-  gameViewState({required this.questionList});
+  int questionIndex = 0;
+  int score = 0;
+  int noOfQuestion = 0;
   @override
   Widget build(BuildContext context) {
-    //Bygger om hela skiten varje gång den settar state...
-    String question = '';
-    String correctAnswer = '';
-    String incorrectAnswer1 = '';
-    String incorrectAnswer2 = '';
-    String incorrectAnswer3 = '';
+    var state = MyState();
     List<String> allAnswers = [];
+    const int answerIndex = 0;
     try {
-      question = questionList[index]['question'];
-      if (questionList[index]['type'] == 'boolean') {
-        correctAnswer = questionList[index]['correct_answer'];
-        incorrectAnswer1 =
-            questionList[index]['incorrect_answers'][answerindex];
-        allAnswers.add(correctAnswer);
-        allAnswers.add(incorrectAnswer1);
-        allAnswers.shuffle();
-      } else if (questionList[index]['type'] == 'multiple') {
-        correctAnswer = questionList[index]['correct_answer'];
-        incorrectAnswer1 =
-            questionList[index]['incorrect_answers'][answerindex];
-        incorrectAnswer2 =
-            questionList[index]['incorrect_answers'][answerindex + 1];
-        incorrectAnswer3 =
-            questionList[index]['incorrect_answers'][answerindex + 2];
-        allAnswers.add(correctAnswer);
-        allAnswers.add(incorrectAnswer1);
-        allAnswers.add(incorrectAnswer2);
-        allAnswers.add(incorrectAnswer3);
-        allAnswers.shuffle();
+      if (state.qList[questionIndex].type == 'boolean') {
+        allAnswers.add(state.qList[questionIndex].correct_answer);
+        allAnswers
+            .add(state.qList[questionIndex].incorrect_answers[answerIndex]);
+      } else {
+        allAnswers.add(state.qList[questionIndex].correct_answer);
+        allAnswers
+            .add(state.qList[questionIndex].incorrect_answers[answerIndex]);
+        allAnswers
+            .add(state.qList[questionIndex].incorrect_answers[answerIndex + 1]);
+        allAnswers
+            .add(state.qList[questionIndex].incorrect_answers[answerIndex + 2]);
       }
     } on RangeError {
-      print('Exception caught');
+      print('out of range..');
     }
+    allAnswers.shuffle();
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Trivia App'),
-        centerTitle: true,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+        appBar: AppBar(
+          title: Text('Trivia App'),
+          centerTitle: true,
+        ),
+        body: Center(
           child: Column(
             children: [
-              Text('Score: ' + score.toString()),
               Container(
-                height: MediaQuery.of(context).size.height / 12,
+                height: MediaQuery.of(context).size.height / 80,
               ),
-              TextButton(
-                onPressed: () {
-                  index++;
-                  // print('ALL ANSWERS IN LIST: ' + allAnswers.toString());
-                  // print('A ANSWER IN LIST: ' + allAnswers[0]);
-                  // print('Correct answer: ' +
-                  //     questionList[index]['correct_answer']);
-                  // print('INDEX: ' + index.toString());
-                  // print('TYPE of question: ' + questionList[index]['type']);
-                  // if (questionList[index]['type'] == 'boolean') {
-                  //   String correctAnswer =
-                  //       questionList[index]['correct_answer'];
-                  //   String incorrectAnswer1 =
-                  //       questionList[index]['incorrect_answers'][answerindex];
-                  //   score = score;
-                  // } else if (questionList[index]['type'] ==
-                  //     'multiple'.toString()) {
-                  //   String correctAnswer =
-                  //       questionList[index]['correct_answer'];
-                  //   String incorrectAnswer1 =
-                  //       questionList[index]['incorrect_answers'][answerindex];
-                  //   String incorrectAnswer2 = questionList[index]
-                  //       ['incorrect_answers'][answerindex + 1];
-                  //   String incorrectAnswer3 = questionList[index]
-                  //       ['incorrect_answers'][answerindex + 2];
-                  //   score = score;
-                  // }
-                  setState(() {});
-                },
-                child: const Text('Skippa fråga!'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    child: Text('SCORE: ' + score.toString()),
+                  ),
+                  Container(
+                    child: Text('No Of Questions: ' + noOfQuestion.toString()),
+                  ),
+                ],
               ),
               Container(
-                height: MediaQuery.of(context).size.height / 5,
-                width: MediaQuery.of(context).size.width / 1.2,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  boxShadow: [
+                height: MediaQuery.of(context).size.height / 24,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  //color: Colors.blue[100],
+                  decoration:
+                      BoxDecoration(color: Colors.blue[100], boxShadow: [
                     BoxShadow(
-                      color: Colors.white70.withOpacity(0.5),
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 2,
+                      offset: Offset(2, 4),
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    question,
-                    style: TextStyle(
-                      fontSize: 16,
+                  ]),
+                  height: MediaQuery.of(context).size.height / 4,
+                  //width: MediaQuery.of(context).size.width / 1.2,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      state.qList[questionIndex].question,
+                      style: TextStyle(fontSize: 24),
                     ),
                   ),
                 ),
               ),
               ListView(
                 shrinkWrap: true,
-                children: new List.generate(
+                children: List.generate(
                   allAnswers.length,
                   (index) => displayAllCards((allAnswers[index])),
                 ),
               ),
+              Container(
+                height: MediaQuery.of(context).size.height / 25,
+              ),
+              Container(
+                child: TextButton(
+                    onPressed: () {
+                      questionIndex++;
+                      setState(() {});
+                    },
+                    child: const Text('Skippa fråga')),
+              ),
             ],
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   displayAllCards(String answer) {
-    bool colorBool = true;
-    return Card(
-      elevation: 4,
-      child: ValueListenableBuilder(
-        valueListenable: rightOrWrong,
-        builder: (context, value, child) => InkWell(
-          onTap: () async {
-            print(colorBool);
-            updateValue(colorBool);
-            if (answer == questionList[index]['correct_answer']) {
-              colorBool = false;
-              print('CORRECT!!');
-              score++;
-              await Future.delayed(Duration(seconds: 0), () {
-                setState(() {
-                  colorBool = true;
-                });
+    var state = MyState();
+    bool correct = false;
+    rightOrWrong.value = false;
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: Card(
+        color: Colors.blue[100],
+        elevation: 4,
+        child: ValueListenableBuilder(
+          valueListenable: rightOrWrong,
+          builder: (context, value, child) => InkWell(
+            onTap: () async {
+              if (answer == state.qList[questionIndex].correct_answer) {
+                correct = true;
+                rightAnswer(correct);
+                score++;
+                questionIndex++;
+                noOfQuestion++;
+              } else {
+                questionIndex++;
+                noOfQuestion++;
+              }
+              await Future.delayed(Duration(seconds: 2), () {
+                setState(() {});
               });
-              index++;
-              // if (done) {
-              //   print('DETTA ÄR I POP');
-              //   Navigator.pop(context);
-              // }
-            } else {
-              print('INCORRECT');
-              colorBool = true;
-              await Future.delayed(Duration(seconds: 0));
-              setState(() {
-                colorBool = true;
-              });
-              index++;
-              // if (done) {
-              //   print('DETTA ÄR I POP');
-              //   Navigator.pop(context);
-              // }
-            }
-          },
-          child: ListTile(
-            title: Center(
-              child: StatefulBuilder(
-                builder: (context, setState) => Text(
-                  answer,
-                  style: TextStyle(
-                      color: colorBool ? Colors.black : Colors.green[400]),
+            },
+            child: ListTile(
+              title: Center(
+                child: StatefulBuilder(
+                  builder: (context, setState) => Text(
+                    answer,
+                    style:
+                        TextStyle(color: correct ? Colors.green : Colors.black),
+                  ),
                 ),
               ),
             ),
@@ -193,8 +163,7 @@ class gameViewState extends State<gameView> {
     );
   }
 
-  updateValue(bool val) {
-    var result = (val == true || val == false);
-    rightOrWrong.value = result;
+  rightAnswer(bool correct) {
+    rightOrWrong.value = correct;
   }
 }
