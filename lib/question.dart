@@ -25,10 +25,9 @@ class MyState extends ChangeNotifier {
   List<Question> get qList => _allQuestions;
 
   Future getQuestions() async {
-    print('getQuestions körs....');
     List<Question> allQuestions = [];
     final respone =
-        await http.get(Uri.parse('https://opentdb.com/api.php?amount=10'));
+        await http.get(Uri.parse('https://opentdb.com/api.php?amount=30'));
     Map<String, dynamic> map = json.decode(respone.body);
     List<dynamic> data = map["results"];
     for (var element in data) {
@@ -39,8 +38,6 @@ class MyState extends ChangeNotifier {
           incorrect_answers: element['incorrect_answers']));
     }
     _allQuestions = allQuestions;
-    print('Fråga ett från qList --> ' + qList[4].question);
-    print('Fråga ett från _allQuestions --> ' + _allQuestions[0].question);
     notifyListeners();
   }
 

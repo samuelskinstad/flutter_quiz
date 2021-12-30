@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:quiz_final/questions.dart';
-
-import 'game_view.dart';
+import 'gameView.dart';
+import 'question.dart';
 
 void main() {
   var state = MyState();
@@ -18,14 +19,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      // theme: ThemeData(
+      //   primarySwatch: Colors.grey,
+      // ),
       title: 'Flutter Demo',
-      home: const MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  // ignore: use_key_in_widget_constructors
   const MyHomePage();
 
   @override
@@ -36,25 +42,25 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 76, 79, 77),
       appBar: AppBar(
-        title: Text('TRIVIA'),
+        title: const Text('Trivia App', style: TextStyle(color: Color.fromARGB(255, 201, 171, 0)),),
+        backgroundColor: const Color.fromARGB(255, 66, 69, 67),
         centerTitle: true,
       ),
       body: Center(
         child: Column(
           children: [
-            Container(
-              child: Text('Trivia App av SamuelSkinstad'),
-            ),
+            const Text('Trivia App av SamuelSkinstad'),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Container(
+              child: SizedBox(
                 height: MediaQuery.of(context).size.height / 2,
                 width: MediaQuery.of(context).size.width / 1.2,
-                color: Colors.white24,
+                //color: Colors.white24,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Image.asset('assets/images/trivia.png'),
+                  child: Image.asset('assets/images/TriviaText.png'),
                 ),
               ),
             ),
@@ -62,18 +68,20 @@ class _MyHomePageState extends State<MyHomePage> {
               height: MediaQuery.of(context).size.height / 8,
             ),
             TextButton(
+              
                 style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 66, 69, 67)),
                   elevation: MaterialStateProperty.all(1),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18),
-                        side: const BorderSide(color: Colors.amber)),
+                        side: const BorderSide(color: Color.fromARGB(255, 66, 69, 67))),
                   ),
                 ),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => GameView(),
+                      builder: (context) => const GameView(),
                     ),
                   );
                 },
@@ -81,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.all(8.0),
                   child: Text(
                     'New Game!',
-                    style: TextStyle(fontSize: 24),
+                    style: TextStyle(fontSize: 24, color: Color.fromARGB(255, 201, 171, 0)),
                   ),
                 )),
           ],
